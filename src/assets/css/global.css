@@ -1,0 +1,29 @@
+html,
+body,
+#app,
+input,
+ul {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+}
+/* 图标统一样式 */
+i.iconfont {
+  font-size: 30px;
+  color: dimgray;
+}
+/*给左侧权限菜单设置样式*/
+.el-submenu__title,
+.el-menu-item {
+  font-size: 13px;
+}
+i.iconfont {
+  margin-right: 10px;
+}
+/*给el-table设置统一样式*/
+.el-table {
+  font-size: 12px;
+  text-align: center;
+  padding-left: 50px
+}
