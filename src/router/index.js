@@ -1,10 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Welcome from '@/components/Welcome'
-import ID from '@/components/ID'
+import Account from '@/components/Account'
 import User from '@/components/User'
+import Check from '@/components/Check'
+import Machine from '@/components/Machine'
+import Price from '@/components/Price'
+import Order from '@/components/Order'
+import Statistics from '@/components/Statistics'
 
 Vue.use(Router)
 
@@ -20,8 +26,13 @@ var router = new Router({
       redirect: '/welcome',
       children: [
         { path: '/welcome', component: Welcome },
-        { path: '/id', component: ID },
-        { path: '/user', component: User }
+        { path: '/account', component: Account },
+        { path: '/user', component: User },
+        { path: '/check', component: Check },
+        { path: '/machine', component: Machine },
+        { path: '/price', component: Price },
+        { path: '/order', component: Order },
+        { path: '/statistics', component: Statistics }
       ]
     }
   ]

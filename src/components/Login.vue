@@ -1,7 +1,7 @@
 <template>
   <div id="login-container">
     <div id="login-box">
-        <img src="../assets/img/user.png" alt>
+      <img src="../assets/img/user.png" alt>
       <div class="basebox">
         <i slot="prefix" class="iconfont icon-user"></i>
         <input type="text" placeholder="用户名" v-model="loginForm.name">
@@ -48,42 +48,28 @@ export default {
   methods: {
     // 点击登陆事件
     login() {
-      this.$http
-        .post(
-          '/login',
-          JSON.stringify(this.loginForm)
-        )
-        .then(res => {
-          // 判断用户名或密码 真实性校验失败
-          if (res.status !== 200) {
-            return this.$message.error('用户名或密码不存在')
-          }
-          // 通过浏览器的sessionStorage记录服务器返回的token信息
-          window.sessionStorage.setItem('token', res.data.token)
-
-          // (校验成功)页面重定向到后台首页(/home)
-          this.$router.push('/home')
-        })
+      this.$http.post('/login', JSON.stringify(this.loginForm)).then(res => {
+        // 判断用户名或密码 真实性校验失败
+        if (res.status !== 200) {
+          return this.$message.error('用户名或密码不存在')
+        }
+        // 通过浏览器的sessionStorage记录服务器返回的token信息
+        window.sessionStorage.setItem('token', res.data.token)
+        // (校验成功)页面重定向到后台首页(/home)
+        this.$router.push('/home')
+      })
     },
     // 获取验证码
     getkey() {
       console.log(this.$qs.stringify(this.aa))
-      this.$http
-        .post(
-          '/login',
-          JSON.stringify(this.loginForm)
-        )
-        .then(res => {
-          this.getcode = res.data.code
-        })
+      this.$http.post('/login', JSON.stringify(this.loginForm)).then(res => {
+        this.getcode = res.data.code
+      })
     },
     // 重新获取验证码
     newkey() {
       this.$http
-        .post(
-          '/refresh_code',
-          JSON.stringify(this.loginForm)
-        )
+        .post('/refresh_code', JSON.stringify(this.loginForm))
         .then(res => {
           this.getcode = res.data.code
         })

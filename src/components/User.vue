@@ -7,10 +7,10 @@
       </li>
       <li>
         手机号：
-        <input>
+        <input v-model="keyword.phone">
       </li>
       <li>
-        用户状态：
+        审核状态：
         <el-select v-model="value" placeholder="请选择">
           <el-option
             v-for="item in options"
@@ -24,12 +24,18 @@
         <el-button class="btn">搜索</el-button>
       </li>
     </ul>
-    <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="date" label="序号" width="200"></el-table-column>
-      <el-table-column prop="name" label="微信昵称" width="300"></el-table-column>
-      <el-table-column prop="address" label="微信号" width="300"></el-table-column>
-      <el-table-column prop="address" label="手机号"></el-table-column>
-      <el-table-column prop="address" label="状态"></el-table-column>
+    <el-table :data="userList" border style="width: 100%">
+      <el-table-column prop="index" label="序号" width="200"></el-table-column>
+      <el-table-column prop="nick" label="微信昵称" width="300"></el-table-column>
+      <el-table-column prop="gender" label="微信号" width="300"></el-table-column>
+      <el-table-column prop="phone" label="手机号"></el-table-column>
+      <el-table-column prop="type" label="状态">
+        <el-switch
+          v-model="info.row.type"
+          slot-scope="info"
+          @change="changeState(info.row.id, info.row.type)"
+        ></el-switch>
+      </el-table-column>
     </el-table>
     <!-- 数据分页展示 -->
     <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
@@ -37,25 +43,52 @@
 </template>
 
 <script>
-export default {}
+export default {
+  mounted() {
+    this.getuserList()
+  },
+  data() {
+    return {
+      keyword: {
+        phone: '',
+        status: '',
+        token: window.sessionStorage.getItem('token')
+      },
+      userList: [],
+      options: [
+        {
+          value: '选项1',
+          label: '全部'
+        },
+        {
+          value: '选项2',
+          label: '双皮奶'
+        }
+      ],
+      value: ''
+    }
+  },
+  methods: {
+    getuserList() {
+      this.$http.post('/user_list').then(res => {
+        this.userList = res.data
+        console.log(this.userList)
+      })
+    }
+  }
+}
 </script>
 <style lang="less" scoped>
 ul {
-  padding-left: 5px;
-  display: inline-block;
   height: 50px;
+  display: flex;
   li {
-    float: left;
     list-style: none;
-    margin-right: 120px;
-    height: 50px;
+    flex: 1;
     input {
       height: 40px;
       font-size: 20px;
     }
-  }
-  li:last-child {
-    margin-right: 0;
   }
   .btn {
     background-color: #15a46c;

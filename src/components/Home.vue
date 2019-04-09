@@ -28,19 +28,22 @@
           :collapse-transition="false"
           :router="true"
         >
-          <el-submenu index="1">
+          <el-submenu
+            :index="item.id+''"
+            v-for="(item) in menuList"
+            :key="item.id"
+          >
             <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>账号管理</span>
+              <span>{{item.authName}}</span>
             </template>
-            <el-menu-item>
-              <el-menu-item index="1-1">账号管理</el-menu-item>
+            <el-menu-item :index="User" v-for="item2 in item.children" :key="item2.id">
+              <span>{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view/>
+        <router-view></router-view>
       </el-main>
     </el-container>
     <el-footer></el-footer>
@@ -61,8 +64,7 @@ export default {
   methods: {
     // 获得用于显示的左侧导航权限信息
     getMenuList() {
-      this.$http.get('/left_com').then(res => {
-        console.log(res)
+      this.$http.post('/left').then(res => {
         // 把权限数据赋予给menuList
         this.menuList = res.data
         console.log(this.menuList)

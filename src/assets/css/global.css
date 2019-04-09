@@ -6,7 +6,7 @@ ul {
   height: 100%;
   margin: 0;
   padding: 0;
-  border: 0 none;
+  outline-style: none
 }
 /* 图标统一样式 */
 i.iconfont {
@@ -25,5 +25,9 @@ i.iconfont {
 .el-table {
   font-size: 12px;
   text-align: center;
-  padding-left: 50px
+}
+/*给分页 设置统一样式*/
+.el-pagination{
+  margin-top:88px;
+  font-size:12px;
 }
