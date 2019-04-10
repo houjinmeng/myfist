@@ -2,16 +2,12 @@
   <div style="text-align:center">
     <ul>
       <li>
-        微信号：
-        <input>
-      </li>
-      <li>
         手机号：
-        <input v-model="keyword.phone">
+        <input v-model="tableList.keyword.phone">
       </li>
       <li>
         审核状态：
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="tableList.keyword.status" placeholder="全部">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -21,14 +17,14 @@
         </el-select>
       </li>
       <li>
-        <el-button class="btn">搜索</el-button>
+        <el-button class="btn" @click="search">搜索</el-button>
       </li>
     </ul>
-    <el-table :data="userList" border style="width: 100%">
-      <el-table-column prop="index" label="序号" width="200"></el-table-column>
+    <el-table :data="userList" stripe style="width: 100%">
+      <el-table-column type="index" label="序号" width="200"></el-table-column>
       <el-table-column prop="nick" label="微信昵称" width="300"></el-table-column>
-      <el-table-column prop="gender" label="微信号" width="300"></el-table-column>
-      <el-table-column prop="phone" label="手机号"></el-table-column>
+      <el-table-column prop="phone" label="手机号" width="300"></el-table-column>
+      <el-table-column prop="addtime" label="最后登录时间"></el-table-column>
       <el-table-column prop="type" label="状态">
         <el-switch
           v-model="info.row.type"
@@ -37,8 +33,16 @@
         ></el-switch>
       </el-table-column>
     </el-table>
-    <!-- 数据分页展示 -->
-    <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
+    <!--数据分页展示-->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="querycdt.pagenum"
+      :page-sizes="[3, 5, 10, 20]"
+      :page-size="querycdt.pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="querycdt.tot"
+    ></el-pagination>
   </div>
 </template>
 
@@ -49,51 +53,92 @@ export default {
   },
   data() {
     return {
-      keyword: {
-        phone: '',
-        status: '',
-        token: window.sessionStorage.getItem('token')
+      // 获取列表数据所传参数
+      tableList: {
+        token: window.sessionStorage.getItem('token'),
+        keyword: {
+          phone: '',
+          status: ''
+        }
       },
       userList: [],
+      // 审核状态下拉框
       options: [
         {
-          value: '选项1',
-          label: '全部'
+          value: '1',
+          label: '禁用'
         },
         {
-          value: '选项2',
-          label: '双皮奶'
+          value: '0',
+          label: '未禁用'
         }
       ],
-      value: ''
+      // 给获取用户数据设置查询条件
+      querycdt: {
+        // 查询关键字
+        query: '',
+        // 当前页码
+        pagenum: 1,
+        // 每页获取记录条数
+        pagesize: 3,
+        // 总记录条数
+        tot: 0
+      }
     }
   },
   methods: {
+    // 获取用户列表数据
     getuserList() {
-      this.$http.post('/user_list').then(res => {
-        this.userList = res.data
-        console.log(this.userList)
-      })
+      this.$http
+        .post('/user_list', JSON.stringify(this.tableList))
+        .then(res => {
+          this.userList = res.data
+        })
+    },
+    // 按需搜索
+    search() {
+      this.$http
+        .post('/user_list', JSON.stringify(this.tableList))
+        .then(res => {
+          this.userList = res.data
+        })
+    },
+    /**  数据分页相关1 */
+    // 每条记录条数变化的回调处理
+    handleSizeChange(arg) {
+      // arg: 变化后的记录条数
+      // console.log(arg)
+      this.querycdt.pagesize = arg
+      // 重新根据条件获得数据
+      this.getUserInfos()
+    },
+    // 当前页码变化的回调处理
+    handleCurrentChange(arg) {
+      // arg: 变化后的当前页码值
+      // console.log(arg)
+      this.querycdt.pagenum = arg
+      // 根据变化后的页码重新获得数据
+      this.getUserInfos()
     }
   }
 }
 </script>
 <style lang="less" scoped>
 ul {
-  height: 50px;
   display: flex;
+  height: 50px;
   li {
     list-style: none;
-    flex: 1;
+    margin-right: 20px;
     input {
-      height: 40px;
+      height: 35px;
       font-size: 20px;
     }
   }
   .btn {
     background-color: #15a46c;
     color: #fff;
-    width: 100px;
+    width: 80px;
     height: 40px;
   }
 }

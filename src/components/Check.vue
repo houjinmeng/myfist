@@ -12,7 +12,7 @@
         </div>
         <div class="block">
           <span class="demonstration">至</span>
-          <el-date-picker v-model="value1" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-date-picker v-model="value2" type="datetime" placeholder="选择日期时间"></el-date-picker>
         </div>
       </li>
       <li>
@@ -31,34 +31,19 @@
       </li>
     </ul>
     <el-card class="card-box">
-      <!-- table表格数据 -->
+      <!-- table表格数据展示 -->
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="date" label="ID" width="150"></el-table-column>
-        <el-table-column prop="name" label="设备名称" width="150"></el-table-column>
-        <el-table-column prop="address" label="设备地点" width="300"></el-table-column>
-        <el-table-column prop="address" label="设备投放人" width></el-table-column>
-        <el-table-column prop="address" label="投放人手机号"></el-table-column>
-        <el-table-column prop="address" label="提交审核时间"></el-table-column>
+        <el-table-column prop="id" label="ID" width="150"></el-table-column>
+        <el-table-column prop="machine_name" label="设备名称" width="150"></el-table-column>
+        <el-table-column prop="machine_address" label="设备地点" width="300"></el-table-column>
+        <el-table-column prop="nick" label="设备投放人" width></el-table-column>
+        <el-table-column prop="phone" label="投放人手机号"></el-table-column>
+        <el-table-column prop="creat_time" label="提交审核时间"></el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="info">
-            <el-button
-              type="primary"
-              size="mini"
-              @click="resetPass"
-              style="background-color:#0e9692"
-            >查看</el-button>
-            <el-button
-              type="danger"
-              size="mini"
-              @click="delUser(info.row.id)"
-              style="background-color:#186fb2"
-            >通多</el-button>
-            <el-button
-              type="warning"
-              size="mini"
-              @click="showFenpeiDialog(info.row.id)"
-              style="background-color:#15a46c"
-            >驳回</el-button>
+            <el-button type="primary" size="mini" style="background-color:#0e9692">查看</el-button>
+            <el-button type="danger" size="mini" style="background-color:#186fb2">通多</el-button>
+            <el-button type="warning" size="mini" style="background-color:#15a46c">驳回</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,22 +56,23 @@
           <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
             <el-form-item>
               广告素材：
-              <el-input v-model="formLabelAlign.type" readonly="true"></el-input>
+              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item>
               投放时间：
-              <el-input v-model="formLabelAlign.type" readonly="true"></el-input>
+              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item>
               连续播放次数：
-              <el-input v-model="formLabelAlign.type" readonly="true"></el-input>
+              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item>
               每小时播放次数：
-              <el-input v-model="formLabelAlign.type" readonly="true"></el-input>
+              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
             </el-form-item>
             <el-form-item>
-              花费金额：<el-input v-model="formLabelAlign.type" readonly="true"></el-input>
+              花费金额：
+              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
             </el-form-item>
           </el-form>
         </div>
@@ -100,8 +86,22 @@
 
 <script>
 export default {
+  mounted() {
+    this.getcheckList()
+  },
   data() {
     return {
+      // 获取表格数据要传的参
+      tableList: {
+        token: window.sessionStorage.getItem('token'),
+        keyword: {
+          phone: '',
+          status: '',
+          start_time: '',
+          end_time: ''
+        }
+      },
+      // 下拉日历的数据
       pickerOptions1: {
         shortcuts: [
           {
@@ -129,28 +129,25 @@ export default {
         ]
       },
       value1: '',
-      tableData: [
+      value2: '',
+      // 下拉框死数据
+      options: [
         {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          value: '选项1',
+          label: '未审核'
         },
         {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
+          value: '选项2',
+          label: '通过'
         },
         {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          value: '选项2',
+          label: '未通过'
         }
       ],
+      value: '',
+      // 接收表格数据
+      tableData: [],
       resetPssDialogVisible: false,
       labelPosition: 'right',
       formLabelAlign: {
@@ -159,31 +156,35 @@ export default {
         type: ''
       }
     }
+  },
+  methods: {
+    getcheckList() {
+      this.$http
+        .post('check_list', JSON.stringify(this.tableList))
+        .then(res => {
+          this.tableData = res.data
+        })
+    }
   }
 }
 </script>
 <style lang="less" scoped>
 // 顶部导航栏样式
 ul {
-  padding-left: 5px;
-  display: inline-block;
+  display: flex;
   height: 50px;
   li {
-    float: left;
     list-style: none;
-    margin-right: 120px;
+    margin-right: 20px;
     height: 50px;
     input {
-      height: 40px;
+      height: 35px;
       font-size: 20px;
     }
   }
   .rili {
     display: flex;
     justify-content: space-between;
-  }
-  li:last-child {
-    margin-right: 0;
   }
   .btn {
     background-color: #15a46c;

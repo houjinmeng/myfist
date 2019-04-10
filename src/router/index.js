@@ -11,6 +11,7 @@ import Machine from '@/components/Machine'
 import Price from '@/components/Price'
 import Order from '@/components/Order'
 import Statistics from '@/components/Statistics'
+import Marketing from '@/components/Marketing'
 
 Vue.use(Router)
 
@@ -32,7 +33,8 @@ var router = new Router({
         { path: '/machine', component: Machine },
         { path: '/price', component: Price },
         { path: '/order', component: Order },
-        { path: '/statistics', component: Statistics }
+        { path: '/statistics', component: Statistics },
+        { path: '/marketing', component: Marketing }
       ]
     }
   ]

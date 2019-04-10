@@ -23,7 +23,7 @@
         </div>
         <div class="block">
           <span class="demonstration">至</span>
-          <el-date-picker v-model="value1" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-date-picker v-model="value2" type="datetime" placeholder="选择日期时间"></el-date-picker>
         </div>
       </li>
       <li>
@@ -50,44 +50,62 @@
 export default {
   data() {
     return {
-      tableData: [
+      // 下拉日历的数据
+      pickerOptions1: {
+        shortcuts: [
+          {
+            text: '今天',
+            onClick(picker) {
+              picker.$emit('pick', new Date())
+            }
+          },
+          {
+            text: '昨天',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24)
+              picker.$emit('pick', date)
+            }
+          },
+          {
+            text: '一周前',
+            onClick(picker) {
+              const date = new Date()
+              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', date)
+            }
+          }
+        ]
+      },
+      value1: '',
+      value2: '',
+      // 下拉框死数据
+      options: [
         {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          value: '选项1',
+          label: '全部'
         },
         {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          value: '选项2',
+          label: '双皮奶'
         }
-      ]
+      ],
+      value: '',
+      // 接收订单表格数据
+      tableData: []
     }
   }
 }
 </script>
 <style lang="less" scoped>
 ul {
-  padding-left: 5px;
-  display: inline-block;
+  display: flex;
   height: 50px;
   li {
-    float: left;
     list-style: none;
-    margin-right: 120px;
-    height: 50px;
+    margin-right: 20px;
     input {
-      height: 40px;
+      height: 35px;
       font-size: 20px;
     }
   }

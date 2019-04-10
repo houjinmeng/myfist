@@ -28,15 +28,11 @@
           :collapse-transition="false"
           :router="true"
         >
-          <el-submenu
-            :index="item.id+''"
-            v-for="(item) in menuList"
-            :key="item.id"
-          >
+          <el-submenu :index="item.id+''" v-for="(item) in menuList" :key="item.id">
             <template slot="title">
               <span>{{item.authName}}</span>
             </template>
-            <el-menu-item :index="User" v-for="item2 in item.children" :key="item2.id">
+            <el-menu-item :index="item2.path" v-for="item2 in item.children" :key="item2.id">
               <span>{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
@@ -52,24 +48,119 @@
 
 <script>
 export default {
-  mounted() {
-    this.getMenuList()
-  },
   data() {
     return {
-      // 接收的后端返回的 左侧显示的权限信息
-      menuList: []
+      //  左侧导航菜单数据
+      menuList: [
+        {
+          id: 1,
+          authName: '账号管理',
+          path: null,
+          children: [
+            {
+              id: 8,
+              authName: '账号列表',
+              path: 'account',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 2,
+          authName: '用户管理',
+          path: null,
+          children: [
+            {
+              id: 9,
+              authName: '用户列表',
+              path: 'user',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 3,
+          authName: '审核管理',
+          path: null,
+          children: [
+            {
+              id: 10,
+              authName: '审核列表',
+              path: 'check',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 4,
+          authName: '设备管理',
+          path: null,
+          children: [
+            {
+              id: 11,
+              authName: '设备列表',
+              path: 'machine',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 5,
+          authName: '价格管理',
+          path: null,
+          children: [
+            {
+              id: 12,
+              authName: '价格设置',
+              path: 'price',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 6,
+          authName: '订单管理',
+          path: null,
+          children: [
+            {
+              id: 13,
+              authName: '订单列表',
+              path: 'order',
+              children: []
+            }
+          ]
+        },
+        {
+          id: 7,
+          authName: '统计管理',
+          path: null,
+          children: [
+            {
+              id: 14,
+              authName: '投放统计',
+              path: 'statistics',
+              children: []
+            },
+            {
+              id: 15,
+              authName: '营销号统计',
+              path: 'marketing',
+              children: []
+            }
+          ]
+        }
+      ]
     }
   },
   methods: {
     // 获得用于显示的左侧导航权限信息
-    getMenuList() {
-      this.$http.post('/left').then(res => {
-        // 把权限数据赋予给menuList
-        this.menuList = res.data
-        console.log(this.menuList)
-      })
-    }
+    // getMenuList() {
+    //   this.$http.post('/left').then(res => {
+    //     // 把权限数据赋予给menuList
+    //     this.menuList = res.data
+    //     console.log(this.menuList)
+    //   })
+    // }
   }
 }
 </script>
@@ -119,7 +210,7 @@ export default {
       height: 50px;
       line-height: 50px;
       border-top: 1px solid #2c3438;
-      text-align: center
+      text-align: center;
     }
     #showuser {
       height: 60px;
