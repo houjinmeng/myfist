@@ -4,8 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
-// 引入qs处理字符串
-import qs from 'qs'
+
 // 引入global.css全局样式控制文件
 import './assets/css/global.css'
 // 引入“图标”css样式文件
@@ -20,7 +19,6 @@ Vue.use(ElementUI)
 axios.defaults.baseURL = 'http://192.168.1.144/ad/audit/'
 
 Vue.prototype.$http = axios
-Vue.prototype.$qs = qs
 Vue.config.productionTip = false
 
 // axios的请求拦截器(在其中配置token)

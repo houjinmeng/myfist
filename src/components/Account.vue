@@ -18,10 +18,14 @@
               style="background-color:#0e9692"
             >重置密码</el-button>
             <el-button
-              type="warning"
+              style="background-color:#186fb2;color:#fff"
+              size="mini"
+              @click="resetPass"
+            >角色变更</el-button>
+            <el-button
               size="mini"
               @click="showFenpeiDialog(info.row.id)"
-              style="background-color:#15a46c"
+              style="background-color:#15a46c;color:#fff"
             >删除</el-button>
           </template>
         </el-table-column>

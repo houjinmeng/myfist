@@ -2,10 +2,15 @@
   <el-container>
     <el-header>
       <div id="logo-title">北京快乐平方广告管理后台</div>
-      <div id="user">
-        <img src="../assets/img/user.png" alt>
-        <span>Admin</span>
-      </div>
+      <el-popover placement="bottom-start" trigger="click" id="popover" style="display:flex">
+        <el-button type="primary" @click="logout" style="display:flex">退出登录</el-button>
+        <el-button slot="reference" style="background-color:#18bc9c;border:0 none;color:#fff">
+          <div id="user">
+            <img src="../assets/img/user.png" alt>
+            <span>Admin</span>
+          </div>
+        </el-button>
+      </el-popover>
     </el-header>
     <el-container>
       <el-aside width="200px">
@@ -153,20 +158,29 @@ export default {
     }
   },
   methods: {
-    // 获得用于显示的左侧导航权限信息
-    // getMenuList() {
-    //   this.$http.post('/left').then(res => {
-    //     // 把权限数据赋予给menuList
-    //     this.menuList = res.data
-    //     console.log(this.menuList)
-    //   })
-    // }
+    // 退出系统
+    logout() {
+      // 确认退出
+      // 清除token
+      // 页面跳转到login
+      this.$confirm('确认要退出系统么?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          window.sessionStorage.removeItem('token')
+          this.$router.push('/login')
+        })
+        .catch(() => {})
+    }
   }
 }
 </script>
 <style lang="less" scoped>
 .el-container {
   height: 100%;
+  // 头部样式
   .el-header {
     background-color: #18bc9c;
     color: #fff;
@@ -189,6 +203,8 @@ export default {
       align-items: center;
       justify-content: space-between;
       font-size: 20px;
+      position: relative;
+      margin-top: 2px;
       img {
         width: 50px;
         height: 50px;
@@ -196,7 +212,7 @@ export default {
       }
     }
   }
-
+  // 侧边导航样式
   .el-aside {
     background-color: #222d32;
     color: #333;

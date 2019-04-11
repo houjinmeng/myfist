@@ -25,11 +25,13 @@
       <el-table-column prop="nick" label="微信昵称" width="300"></el-table-column>
       <el-table-column prop="phone" label="手机号" width="300"></el-table-column>
       <el-table-column prop="addtime" label="最后登录时间"></el-table-column>
-      <el-table-column prop="type" label="状态">
+      <el-table-column prop="status" label="状态">
         <el-switch
-          v-model="info.row.type"
+          v-model="info.row.status"
+          :active-value="0"
+          :inactive-value="1"
           slot-scope="info"
-          @change="changeState(info.row.id, info.row.type)"
+          @change="changeState(info.row.id)"
         ></el-switch>
       </el-table-column>
     </el-table>
@@ -64,6 +66,10 @@ export default {
       userList: [],
       // 审核状态下拉框
       options: [
+        {
+          value: '',
+          label: '全部'
+        },
         {
           value: '1',
           label: '禁用'
@@ -119,6 +125,19 @@ export default {
       this.querycdt.pagenum = arg
       // 根据变化后的页码重新获得数据
       this.getUserInfos()
+    },
+    // 修改用户状态的方法
+    changeState(uid) {
+      const data = {
+        token: window.sessionStorage.getItem('token'),
+        id: uid
+      }
+      this.$http.post('/user_status', JSON.stringify(data)).then(res => {
+        if (res.status !== 200) {
+          return this.$message.error('修改状态失败')
+        }
+        this.$message.success('修改状态成功')
+      })
     }
   }
 }

@@ -61,7 +61,6 @@ export default {
     },
     // 获取验证码
     getkey() {
-      console.log(this.$qs.stringify(this.aa))
       this.$http.post('/login', JSON.stringify(this.loginForm)).then(res => {
         this.getcode = res.data.code
       })
