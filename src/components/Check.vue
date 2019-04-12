@@ -3,7 +3,7 @@
     <ul>
       <li>
         手机号：
-        <input>
+        <input oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入手机号">
       </li>
       <li class="rili">
         <div class="block">
@@ -30,94 +30,69 @@
         <el-button class="btn">搜索</el-button>
       </li>
     </ul>
-    <el-card class="card-box">
-      <!-- table表格数据展示 -->
-      <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="id" label="ID" width="150"></el-table-column>
-        <el-table-column prop="machine_name" label="设备名称" width="150"></el-table-column>
-        <el-table-column prop="machine_address" label="设备地点" width="300"></el-table-column>
-        <el-table-column prop="nick" label="设备投放人" width></el-table-column>
-        <el-table-column prop="phone" label="投放人手机号"></el-table-column>
-        <el-table-column prop="creat_time" label="提交审核时间"></el-table-column>
-        <el-table-column prop="address" label="操作">
-          <template slot-scope="info">
-            <el-button
-              size="mini"
-              style="background-color:#0e9692;color:#fff"
-              @click="showDialog(info.row.id)"
-            >查看</el-button>
-            <el-button size="mini" style="background-color:#186fb2;color:#fff">通过</el-button>
-            <el-button size="mini" style="background-color:#15a46c;color:#fff">驳回</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 广告详情及审核流程 -->
-      <div id="box">
-        <div id="left">
-          <div>
-            <span>广告素材：</span>
-            <input type="text" readonly="readonly">
-            <button>预览</button>
-          </div>
-          <div>
-            <span>背景音乐：</span>
-            <input type="text" readonly="readonly">
-            <button>预览</button>
-          </div>
-          <div>
-            <span>投放时间：</span>
-            <input type="text" readonly="readonly">-
-            <input type="text" readonly="readonly">
-          </div>
-          <div>
-            <span>连续播放次数：</span>
-            <input type="text" readonly="readonly">
-          </div>
-          <div>
-            <span>每小时播放次数：</span>
-            <input type="text" readonly="readonly">
-          </div>
-          <div>
-            <span>花费金额：</span>
-            <input type="text" readonly="readonly">
-          </div>
-          <!-- <div style="margin: 20px;"></div>
-          <el-form :label-position="labelPosition" label-width="80px" :model="formLabelAlign">
-            <el-form-item>
-              广告素材：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-            <el-form-item>
-              背景音乐：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-            <el-form-item>
-              投放时间：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-            <el-form-item>
-              连续播放次数：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-            <el-form-item>
-              每小时播放次数：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-            <el-form-item>
-              花费金额：
-              <el-input v-model="formLabelAlign.type" :readonly="true"></el-input>
-            </el-form-item>
-          </el-form>-->
+    <!-- table表格数据展示 -->
+    <el-table :data="tableData" stripe style="width: 100%">
+      <el-table-column prop="id" label="ID" width="150" align="center"></el-table-column>
+      <el-table-column prop="machine_name" label="设备名称" width="150" align="center"></el-table-column>
+      <el-table-column prop="machine_address" label="设备地点" width="300" align="center"></el-table-column>
+      <el-table-column prop="nick" label="设备投放人" align="center"></el-table-column>
+      <el-table-column prop="phone" label="投放人手机号" align="center"></el-table-column>
+      <el-table-column prop="creat_time" label="提交审核时间" align="center"></el-table-column>
+      <el-table-column prop="address" label="操作" align="center">
+        <template slot-scope="info">
+          <el-button
+            size="mini"
+            style="background-color:#0e9692;color:#fff"
+            @click="showDialog(info.row.id)"
+          >查看</el-button>
+          <el-button size="mini" style="background-color:#186fb2;color:#fff">通过</el-button>
+          <el-button size="mini" style="background-color:#15a46c;color:#fff">驳回</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 广告详情及审核流程 -->
+    <div id="box" v-if="show">
+      <div id="left">
+        <div>
+          <span>广告素材：</span>
+          <button>预览</button>
         </div>
-        <div id="right"></div>
+        <div>
+          <span>背景音乐：</span>
+          <button>预览</button>
+        </div>
+        <div>
+          <span>投放时间：</span>
+          <span class="time">{{checkMessage.start_time|formatDate}}</span> -
+          <span class="time">{{checkMessage.end_time|formatDate}}</span>
+        </div>
+        <div>
+          <span>连续播放次数：</span>
+          <span class="time">{{checkMessage.repeat_number}}</span>
+        </div>
+        <div>
+          <span>每小时播放次数：</span>
+          <span class="time">{{checkMessage.play_count}}</span>
+        </div>
+        <div>
+          <span>花费金额：</span>
+          <span class="time">¥ {{checkMessage.order_amount}}</span>
+        </div>
       </div>
-      <!-- 数据分页展示 -->
-      <el-pagination background layout="prev, pager, next" :total="1000"></el-pagination>
-    </el-card>
+      <div id="right"></div>
+    </div>
+    <!-- 数据分页展示 -->
+    <el-pagination
+      @current-change="handleCurrentChange"
+      background
+      layout="prev, pager, next"
+      :total="this.tot"
+    ></el-pagination>
   </div>
 </template>
 
 <script>
+import { formatDate } from '@/common/date.js' // 在组件中引用date.js
 export default {
   mounted() {
     // 页面加载获取列表数据
@@ -125,11 +100,16 @@ export default {
   },
   data() {
     return {
+      // 点击查看是否显示条件
+      show: false,
+      // 记录数据总条数
+      tot: 0,
       // 接收审核素材详细信息
       checkMessage: [],
       // 获取表格数据要传的参
       tableList: {
         token: window.sessionStorage.getItem('token'),
+        page: '',
         keyword: {
           phone: '',
           status: '',
@@ -193,13 +173,31 @@ export default {
       }
     }
   },
+  filters: {
+    formatDate(time) {
+      var date = new Date(time)
+      return formatDate(date, 'yyyy年MM月dd日') // 年月日 格式自己定义   'yyyy : MM : dd'  例 2018年12月5日的格式
+    },
+    formatDateTwo(time) {
+      var date = new Date(time)
+      return formatDate(date, 'hh:mm:ss') // 时间点 例 21点12分12秒的格式
+    }
+  },
   methods: {
+    /**  数据分页相关1 */
+    // 当前页码变化的回调处理
+    handleCurrentChange(arg) {
+      this.tableList.page = arg
+      // 根据变化后的页码重新获得数据
+      this.getcheckList()
+    },
     // 获取审核表格数据方法
     getcheckList() {
       this.$http
         .post('check_list', JSON.stringify(this.tableList))
         .then(res => {
           this.tableData = res.data
+          this.tot = this.tableData.length
         })
     },
     // 获取审核素材具体信息
@@ -209,7 +207,8 @@ export default {
         check_id: uid
       }
       this.$http.post('/check_detail', JSON.stringify(data)).then(res => {
-        console.log(res)
+        this.show = true
+        this.checkMessage = res.data
       })
     }
   }
@@ -225,8 +224,10 @@ ul {
     margin-right: 20px;
     height: 50px;
     input {
-      height: 35px;
-      font-size: 20px;
+      height: 36px;
+      font-size: 16px;
+      border: 1px solid #dcdfe6;
+      padding-left: 10px;
     }
   }
   .rili {
@@ -259,10 +260,9 @@ ul {
         cursor: pointer;
       }
     }
-    input {
-      width: 100px;
-      height: 20px;
-      border: 0 none;
+    .time {
+      text-align: left;
+      width: 128px;
     }
     span {
       display: inline-block;

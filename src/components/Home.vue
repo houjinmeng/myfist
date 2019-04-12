@@ -2,8 +2,8 @@
   <el-container>
     <el-header>
       <div id="logo-title">北京快乐平方广告管理后台</div>
-      <el-popover placement="bottom-start" trigger="click" id="popover" style="display:flex">
-        <el-button type="primary" @click="logout" style="display:flex">退出登录</el-button>
+      <el-popover placement="bottom" trigger="click" id="popover">
+        <el-button type="primary" @click="logout" style="margin-left:24px">退出登录</el-button>
         <el-button slot="reference" style="background-color:#18bc9c;border:0 none;color:#fff">
           <div id="user">
             <img src="../assets/img/user.png" alt>
@@ -204,7 +204,7 @@ export default {
       justify-content: space-between;
       font-size: 20px;
       position: relative;
-      margin-top: 2px;
+      margin-top: 10px;
       img {
         width: 50px;
         height: 50px;

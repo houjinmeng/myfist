@@ -1,9 +1,14 @@
 <template>
   <div style="text-align:center">
+    <!-- 头部搜做区域 -->
     <ul>
       <li>
         手机号：
-        <input v-model="tableList.keyword.phone">
+        <input
+          v-model="tableList.keyword.phone"
+          oninput="value=value.replace(/[^\d]/g,'')"
+          placeholder="请输入手机号"
+        >
       </li>
       <li>
         审核状态：
@@ -21,11 +26,11 @@
       </li>
     </ul>
     <el-table :data="userList" stripe style="width: 100%">
-      <el-table-column type="index" label="序号" width="200"></el-table-column>
-      <el-table-column prop="nick" label="微信昵称" width="300"></el-table-column>
-      <el-table-column prop="phone" label="手机号" width="300"></el-table-column>
-      <el-table-column prop="addtime" label="最后登录时间"></el-table-column>
-      <el-table-column prop="status" label="状态">
+      <el-table-column type="index" label="序号" width="200" align="center"></el-table-column>
+      <el-table-column prop="nick" label="微信昵称" width="300" align="center"></el-table-column>
+      <el-table-column prop="phone" label="手机号" width="300" align="center"></el-table-column>
+      <el-table-column prop="addtime" label="最后登录时间" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" align="center">
         <el-switch
           v-model="info.row.status"
           :active-value="0"
@@ -37,13 +42,10 @@
     </el-table>
     <!--数据分页展示-->
     <el-pagination
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="querycdt.pagenum"
-      :page-sizes="[3, 5, 10, 20]"
-      :page-size="querycdt.pagesize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="querycdt.tot"
+      background
+      layout="prev, pager, next"
+      :total="this.tot"
     ></el-pagination>
   </div>
 </template>
@@ -55,14 +57,18 @@ export default {
   },
   data() {
     return {
+      // 总记录数据条数
+      tot: 100,
       // 获取列表数据所传参数
       tableList: {
         token: window.sessionStorage.getItem('token'),
+        page: '',
         keyword: {
           phone: '',
           status: ''
         }
       },
+      // 接收列表数据
       userList: [],
       // 审核状态下拉框
       options: [
@@ -78,18 +84,7 @@ export default {
           value: '0',
           label: '未禁用'
         }
-      ],
-      // 给获取用户数据设置查询条件
-      querycdt: {
-        // 查询关键字
-        query: '',
-        // 当前页码
-        pagenum: 1,
-        // 每页获取记录条数
-        pagesize: 3,
-        // 总记录条数
-        tot: 0
-      }
+      ]
     }
   },
   methods: {
@@ -99,6 +94,7 @@ export default {
         .post('/user_list', JSON.stringify(this.tableList))
         .then(res => {
           this.userList = res.data
+          this.tot = this.userList.length
         })
     },
     // 按需搜索
@@ -110,21 +106,13 @@ export default {
         })
     },
     /**  数据分页相关1 */
-    // 每条记录条数变化的回调处理
-    handleSizeChange(arg) {
-      // arg: 变化后的记录条数
-      // console.log(arg)
-      this.querycdt.pagesize = arg
-      // 重新根据条件获得数据
-      this.getUserInfos()
-    },
     // 当前页码变化的回调处理
     handleCurrentChange(arg) {
       // arg: 变化后的当前页码值
       // console.log(arg)
-      this.querycdt.pagenum = arg
+      this.tableList.page = arg
       // 根据变化后的页码重新获得数据
-      this.getUserInfos()
+      this.getuserList()
     },
     // 修改用户状态的方法
     changeState(uid) {
@@ -150,8 +138,10 @@ ul {
     list-style: none;
     margin-right: 20px;
     input {
-      height: 35px;
-      font-size: 20px;
+      height: 36px;
+      font-size: 16px;
+      border: 1px solid #dcdfe6;
+      padding-left: 10px;
     }
   }
   .btn {

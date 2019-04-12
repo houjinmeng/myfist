@@ -5,23 +5,17 @@
     </div>
     <el-card class="card-box">
       <el-table :data="tableData" stripe style="width: 100%">
-        <el-table-column prop="date" label="序号" width="260"></el-table-column>
-        <el-table-column prop="name" label="管理账号" width="300"></el-table-column>
-        <el-table-column prop="address" label="绑定微信号" width="300"></el-table-column>
-        <el-table-column prop="address" label="账号角色" width></el-table-column>
-        <el-table-column prop="address" label="操作">
+        <el-table-column prop="date" label="序号" width="260" align="center"></el-table-column>
+        <el-table-column prop="name" label="管理账号" width="300" align="center"></el-table-column>
+        <el-table-column prop="address" label="绑定微信号" width="300" align="center"></el-table-column>
+        <el-table-column prop="address" label="账号角色" width align="center"></el-table-column>
+        <el-table-column prop="address" label="操作" align="center">
           <template slot-scope="info">
             <el-button
-              type="primary"
               size="mini"
               @click="resetPass"
-              style="background-color:#0e9692"
+              style="background-color:#0e9692;color:#fff"
             >重置密码</el-button>
-            <el-button
-              style="background-color:#186fb2;color:#fff"
-              size="mini"
-              @click="resetPass"
-            >角色变更</el-button>
             <el-button
               size="mini"
               @click="showFenpeiDialog(info.row.id)"

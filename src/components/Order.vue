@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 头部搜索区域 -->
     <ul>
       <li>
         订单号：
@@ -30,14 +31,15 @@
         <el-button class="btn">搜索</el-button>
       </li>
     </ul>
+    <!-- 订单表格数据展示 -->
     <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="date" label="Id" width="180"></el-table-column>
-      <el-table-column prop="name" label="订单编号" width="180"></el-table-column>
-      <el-table-column prop="address" label="订单手机号"></el-table-column>
-      <el-table-column prop="address" label="订单金额/元"></el-table-column>
-      <el-table-column prop="address" label="支付状态"></el-table-column>
-      <el-table-column prop="address" label="支付方式"></el-table-column>
-      <el-table-column prop="address" label="操作"></el-table-column>
+      <el-table-column prop="date" label="Id" width="180" align="center"></el-table-column>
+      <el-table-column prop="name" label="订单编号" width="180" align="center"></el-table-column>
+      <el-table-column prop="address" label="订单手机号" align="center"></el-table-column>
+      <el-table-column prop="address" label="订单金额/元" align="center"></el-table-column>
+      <el-table-column prop="address" label="支付状态" align="center"></el-table-column>
+      <el-table-column prop="address" label="支付方式" align="center"></el-table-column>
+      <el-table-column prop="address" label="操作" align="center"></el-table-column>
     </el-table>
     <!-- 数据分页展示 -->
     <div style="width:100%;text-align:center;margin-top:400px">
@@ -112,9 +114,6 @@ ul {
   .rili {
     display: flex;
     justify-content: space-between;
-  }
-  li:last-child {
-    margin-right: 0;
   }
   .btn {
     background-color: #15a46c;
