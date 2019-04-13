@@ -1,7 +1,7 @@
 <template>
   <div style="text-align:center">
     <!-- 头部搜做区域 -->
-    <ul>
+    <ul class="top_search">
       <li>
         手机号：
         <input
@@ -27,8 +27,8 @@
     </ul>
     <el-table :data="userList" stripe style="width: 100%">
       <el-table-column type="index" label="序号" width="200" align="center"></el-table-column>
-      <el-table-column prop="nick" label="微信昵称" width="300" align="center"></el-table-column>
-      <el-table-column prop="phone" label="手机号" width="300" align="center"></el-table-column>
+      <el-table-column prop="nick" label="微信昵称" align="center"></el-table-column>
+      <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
       <el-table-column prop="addtime" label="最后登录时间" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" align="center">
         <el-switch
@@ -131,24 +131,4 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-ul {
-  display: flex;
-  height: 50px;
-  li {
-    list-style: none;
-    margin-right: 20px;
-    input {
-      height: 36px;
-      font-size: 16px;
-      border: 1px solid #dcdfe6;
-      padding-left: 10px;
-    }
-  }
-  .btn {
-    background-color: #15a46c;
-    color: #fff;
-    width: 80px;
-    height: 40px;
-  }
-}
 </style>

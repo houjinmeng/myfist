@@ -5,6 +5,7 @@ body,
   margin: 0;
   padding: 0;
 }
+
 /*给左侧权限菜单设置样式*/
 .el-submenu__title,
 .el-menu-item {
@@ -15,32 +16,34 @@ body,
   margin-top: 15px;
   font-size: 12px;
 }
+
 /*给分页 设置统一样式*/
 .el-pagination {
   margin-top: 15px;
   font-size: 12px;
 }
+// 头部搜索区域样式
 .top_search {
   display: flex;
   height: 50px;
-}
-.top_search li {
-  list-style: none;
-  margin-right: 40px;
-}
-.top_search li input {
-  height: 36px;
-  font-size: 16px;
-  border: 1px solid #dcdfe6;
-  padding-left: 10px;
-}
-.top_search .rili {
-  display: flex;
-  justify-content: space-between;
-}
-.top_search .btn {
-  background-color: #15a46c;
-  color: #fff;
-  width: 100px;
-  height: 40px;
+  li {
+    list-style: none;
+    margin-right: 40px;
+    input {
+      height: 36px;
+      font-size: 16px;
+      border: 1px solid #dcdfe6;
+      padding-left: 10px;
+    }
+  }
+  .rili {
+    display: flex;
+    justify-content: space-between;
+  }
+  .btn {
+    background-color: #15a46c;
+    color: #fff;
+    width: 100px;
+    height: 40px;
+  }
 }

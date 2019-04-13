@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 头部搜索区域 -->
-    <ul>
+    <ul class="top_search">
       <li>
         订单号：
         <input>
@@ -100,26 +100,4 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-ul {
-  display: flex;
-  height: 50px;
-  li {
-    list-style: none;
-    margin-right: 20px;
-    input {
-      height: 35px;
-      font-size: 20px;
-    }
-  }
-  .rili {
-    display: flex;
-    justify-content: space-between;
-  }
-  .btn {
-    background-color: #15a46c;
-    color: #fff;
-    width: 100px;
-    height: 40px;
-  }
-}
 </style>

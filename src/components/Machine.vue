@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul>
+    <ul class="top_search">
       <li>
         <input placeholder="名称、区域" v-model="tableList.keyword.name">
       </li>
@@ -155,28 +155,4 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-ul {
-  display: flex;
-  height: 50px;
-  li {
-    list-style: none;
-    margin-right: 20px;
-    input {
-      height: 36px;
-      font-size: 18px;
-      text-align: center;
-      border: 1px solid #dcdfe6;
-    }
-  }
-  .rili {
-    display: flex;
-    justify-content: space-between;
-  }
-  .btn {
-    background-color: #15a46c;
-    color: #fff;
-    width: 100px;
-    height: 40px;
-  }
-}
 </style>

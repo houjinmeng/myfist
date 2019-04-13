@@ -1,23 +1,27 @@
 <template>
   <div style="text-align:center">
-    <ul>
+    <ul class="top_search">
       <li>
         手机号：
-        <input oninput="value=value.replace(/[^\d]/g,'')" placeholder="请输入手机号">
+        <input
+          oninput="value=value.replace(/[^\d]/g,'')"
+          placeholder="请输入手机号"
+          v-model="tableList.keyword.phone"
+        >
       </li>
       <li class="rili">
         <div class="block">
           <span class="demonstration">提交时间：</span>
-          <el-date-picker v-model="value1" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-date-picker v-model="value1" type="datetime" placeholder="选择日期时间"  value-format="timestamp"></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">至</span>
-          <el-date-picker v-model="value2" type="datetime" placeholder="选择日期时间"></el-date-picker>
+          <el-date-picker v-model="value2" type="datetime" placeholder="选择日期时间"  value-format="timestamp"></el-date-picker>
         </div>
       </li>
       <li>
         审核状态：
-        <el-select v-model="value" placeholder="请选择">
+        <el-select v-model="tableList.keyword.status" placeholder="请选择">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -27,7 +31,7 @@
         </el-select>
       </li>
       <li>
-        <el-button class="btn">搜索</el-button>
+        <el-button class="btn" @click="search">搜索</el-button>
       </li>
     </ul>
     <!-- table表格数据展示 -->
@@ -45,8 +49,16 @@
             style="background-color:#0e9692;color:#fff"
             @click="showDialog(info.row.id)"
           >查看</el-button>
-          <el-button size="mini" style="background-color:#186fb2;color:#fff">通过</el-button>
-          <el-button size="mini" style="background-color:#15a46c;color:#fff">驳回</el-button>
+          <el-button
+            size="mini"
+            style="background-color:#186fb2;color:#fff"
+            @click="passDialog(info.row.id)"
+          >通过</el-button>
+          <el-button
+            size="mini"
+            style="background-color:#15a46c;color:#fff"
+            @click="rejectDialog(info.row.id)"
+          >驳回</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -63,8 +75,8 @@
         </div>
         <div>
           <span>投放时间：</span>
-          <span class="time">{{checkMessage.start_time|formatDate}}</span> -
-          <span class="time">{{checkMessage.end_time|formatDate}}</span>
+          <span class="time">{{checkMessage.start_time*1000|formatDate}}</span> -
+          <span class="time">{{checkMessage.end_time*1000|formatDate}}</span>
         </div>
         <div>
           <span>连续播放次数：</span>
@@ -88,6 +100,14 @@
       layout="prev, pager, next"
       :total="this.tot"
     ></el-pagination>
+    <!-- 驳回对话框 -->
+    <el-dialog title="提示：请输入驳回原因" :visible.sync="centerDialogVisible" width="20%" center>
+      <textarea cols="30" rows="5" v-model="rejectMessage" style="margin-left:48px"></textarea>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="centerDialogVisible = false;rejectMessage=''">取 消</el-button>
+        <el-button type="primary" @click="reject">驳 回</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -100,6 +120,12 @@ export default {
   },
   data() {
     return {
+      // 接收驳回用户id
+      rejectId: '',
+      // 接收驳回理由
+      rejectMessage: '',
+      // 驳回对话框显示隐藏
+      centerDialogVisible: false,
       // 点击查看是否显示条件
       show: false,
       // 记录数据总条数
@@ -118,35 +144,9 @@ export default {
         }
       },
       // 下拉日历的数据
-      pickerOptions1: {
-        shortcuts: [
-          {
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date())
-            }
-          },
-          {
-            text: '昨天',
-            onClick(picker) {
-              const date = new Date()
-              date.setTime(date.getTime() - 3600 * 1000 * 24)
-              picker.$emit('pick', date)
-            }
-          },
-          {
-            text: '一周前',
-            onClick(picker) {
-              const date = new Date()
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', date)
-            }
-          }
-        ]
-      },
       value1: '',
       value2: '',
-      // 下拉框死数据
+      // 审核状态下拉框数据
       options: [
         {
           value: '0',
@@ -154,25 +154,19 @@ export default {
         },
         {
           value: '1',
-          label: '通过'
+          label: '审核成功'
         },
         {
           value: '2',
-          label: '未通过'
+          label: '审核失败'
         }
       ],
       value: '',
       // 接收表格数据
-      tableData: [],
-      resetPssDialogVisible: false,
-      labelPosition: 'right',
-      formLabelAlign: {
-        name: '',
-        region: '',
-        type: ''
-      }
+      tableData: []
     }
   },
+  // 时间戳过滤器
   filters: {
     formatDate(time) {
       var date = new Date(time)
@@ -184,6 +178,17 @@ export default {
     }
   },
   methods: {
+    // 按需搜所
+    search() {
+      console.log(this.value1)
+      this.tableList.keyword.start_time = this.value1 / 1000
+      this.tableList.keyword.end_time = this.value2 / 1000
+      this.$http
+        .post('/check_list', JSON.stringify(this.tableList))
+        .then(res => {
+          this.tableData = res.data
+        })
+    },
     /**  数据分页相关1 */
     // 当前页码变化的回调处理
     handleCurrentChange(arg) {
@@ -200,7 +205,7 @@ export default {
           this.tot = this.tableData.length
         })
     },
-    // 获取审核素材具体信息
+    // 查看 获取审核素材具体信息
     showDialog(uid) {
       const data = {
         token: window.sessionStorage.getItem('token'),
@@ -210,37 +215,55 @@ export default {
         this.show = true
         this.checkMessage = res.data
       })
+    },
+    // 通过审核事件
+    passDialog(uid) {
+      this.$confirm('确定通过审核么?', '提示', {
+        confirmButtonText: '通过',
+        cancelButtonText: '返回',
+        type: 'success'
+      })
+        .then(() => {
+          const data = {
+            token: window.sessionStorage.getItem('token'),
+            check_id: uid
+          }
+          this.$http.post('/check_suc', JSON.stringify(data)).then(res => {
+            if (res.status !== 200) {
+              return this.$message.error('通过审核失败')
+            }
+            this.$message.success('通过审核成功')
+            this.getcheckList()
+          })
+        })
+        .catch(() => {})
+    },
+    // 驳回审核事件
+    rejectDialog(uid) {
+      this.centerDialogVisible = true
+      this.rejectId = uid
+    },
+    // 驳回弹窗发送驳回理由
+    reject() {
+      this.centerDialogVisible = false
+      const data = {
+        token: window.sessionStorage.getItem('token'),
+        check_id: this.rejectId,
+        explain: this.rejectMessage
+      }
+      this.$http.post('/check_err', JSON.stringify(data)).then(res => {
+        if (res.status !== 200) {
+          return this.$message.error('驳回审核失败')
+        }
+        this.$message.success('驳回审核成功')
+        this.getcheckList()
+        this.rejectMessage = ''
+      })
     }
   }
 }
 </script>
 <style lang="less" scoped>
-// 顶部导航栏样式
-ul {
-  display: flex;
-  height: 50px;
-  li {
-    list-style: none;
-    margin-right: 20px;
-    height: 50px;
-    input {
-      height: 36px;
-      font-size: 16px;
-      border: 1px solid #dcdfe6;
-      padding-left: 10px;
-    }
-  }
-  .rili {
-    display: flex;
-    justify-content: space-between;
-  }
-  .btn {
-    background-color: #15a46c;
-    color: #fff;
-    width: 100px;
-    height: 40px;
-  }
-}
 // 底部广告详情盒子样式
 #box {
   display: flex;
