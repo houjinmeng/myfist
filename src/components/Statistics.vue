@@ -21,29 +21,81 @@
         <el-table-column prop="machine_name" label="设备名称" align="center"></el-table-column>
         <el-table-column prop="address" label="设备地点" align="center"></el-table-column>
         <el-table-column prop label="操作" align="center">
-          <el-button size="medium" style="background-color:#0e9692;color:#fff">查看</el-button>
+          <template slot-scope="info">
+            <el-button
+              size="medium"
+              style="background-color:#0e9692;color:#fff"
+              @click="look(info.row.id)"
+            >查看</el-button>
+          </template>
         </el-table-column>
       </el-table>
-      <div id="right">
-          <div class="block" style="margin-top:20px">
-            <span class="demonstration">开始日期：</span>
-            <el-date-picker v-model="value1" type="date" placeholder="选择日期"  value-format="yyyy/MM/dd"></el-date-picker>
-          </div>
-          <ul>
-            <li><span>{{value1}}/12:00</span>至<span>{{value1}}13:00</span></li>
-            <li><span>{{value1}}13:00</span>至<span>{{value1}}14:00</span></li>
-            <li><span>{{value1}}14:00</span>至<span>{{value1}}15:00</span></li>
-            <li><span>{{value1}}15:00</span>至<span>{{value1}}16:00</span></li>
-            <li><span>{{value1}}16:00</span>至<span>{{value1}}17:00</span></li>
-            <li><span>{{value1}}17:00</span>至<span>{{value1}}18:00</span></li>
-            <li><span>{{value1}}18:00</span>至<span>{{value1}}19:00</span></li>
-            <li><span>{{value1}}19:00</span>至<span>{{value1}}20:00</span></li>
-            <li><span>{{value1}}21:00</span>至<span>{{value1}}22:00</span></li>
-            <li><span>{{value1}}22:00</span>至<span>{{value1}}23:00</span></li>
-            <li><span>{{value1}}23:00</span>至<span>{{value1}}00:00</span></li>
-            <li><span>{{value1}}00:00</span>至<span>{{value1}}01:00</span></li>
-          </ul>
+      <!-- 点击查看选择日期 -->
+      <div id="right" v-if="show">
+        <span id="clock" @click="show=false">X</span>
+        <div class="block" style="margin-top:20px">
+          <span class="demonstration">选择日期：</span>
+          <el-date-picker v-model="value1" type="date" placeholder="选择日期" value-format="yyyy/MM/dd"></el-date-picker>
+        </div>
+        <ul>
+          <li @click="lookList">
+            <span>{{value1}}/12:00</span>至
+            <span>{{value1}}/13:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/13:00</span>至
+            <span>{{value1}}/14:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/14:00</span>至
+            <span>{{value1}}/15:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/15:00</span>至
+            <span>{{value1}}/16:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/16:00</span>至
+            <span>{{value1}}/17:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/17:00</span>至
+            <span>{{value1}}/18:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/18:00</span>至
+            <span>{{value1}}/19:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/19:00</span>至
+            <span>{{value1}}/20:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/21:00</span>至
+            <span>{{value1}}/22:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/22:00</span>至
+            <span>{{value1}}/23:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/23:00</span>至
+            <span>{{value1}}/00:00</span>
+          </li>
+          <li>
+            <span>{{value1}}/00:00</span>至
+            <span>{{value1}}/01:00</span>
+          </li>
+        </ul>
       </div>
+      <!-- 查看具体时间段的列表 -->
+      <el-dialog :visible.sync="lookTableVisible">
+        <el-table :data="lookMessage" stripe style="width: 100%">
+          <el-table-column prop label="投放人" width="200" align="center"></el-table-column>
+          <el-table-column prop label="投放素材" align="center"></el-table-column>
+          <el-table-column prop label align="播放次数"></el-table-column>
+        </el-table>
+      </el-dialog>
     </div>
     <!-- 数据分页展示 -->
     <el-pagination
@@ -62,6 +114,14 @@ export default {
   },
   data() {
     return {
+      // 接收查看具体时间段列表数据
+      lookMessage: [],
+      // 接收点击查看当前id
+      Id: '',
+      // 点击查看显示隐藏
+      show: false,
+      lookTableVisible: false,
+      // 日历默认值
       value1: '',
       // 总记录数据条数
       tot: 100,
@@ -79,6 +139,26 @@ export default {
     }
   },
   methods: {
+    // 获取查看具体时间段数据
+    lookList() {
+      this.lookTableVisible = true
+      var date = new Date(this.value1)
+      var time = Date.parse(date) / 1000 + 12 * 3600
+      const data = {
+        token: window.sessionStorage.getItem('token'),
+        machine_id: this.Id,
+        timestamp: time
+      }
+      this.$http.post('/statistical_detail', JSON.stringify(data)).then(res => {
+        this.lookMessage = res.data
+      })
+    },
+    // 点击查看按钮
+    look(uid) {
+      this.show = true
+      this.Id = uid
+      this.getDate()
+    },
     // 获取数据列表
     getList() {
       this.$http
@@ -94,6 +174,7 @@ export default {
         .post('/statistical_list', JSON.stringify(this.tableList))
         .then(res => {
           this.tableData = res.data
+          this.tot = this.tableData.length
         })
     },
     /**  数据分页相关1 */
@@ -104,6 +185,20 @@ export default {
       this.tableList.page = arg
       // 根据变化后的页码重新获得数据
       this.getuserList()
+    },
+    // 获取当前日期
+    getDate() {
+      var date = new Date()
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      if (month >= 1 && month <= 9) {
+        month = '0' + month
+      }
+      if (day >= 0 && day <= 9) {
+        day = '0' + day
+      }
+      this.value1 = year + '/' + month + '/' + day
     }
   }
 }
@@ -112,12 +207,28 @@ export default {
 #box {
   display: flex;
   #right {
-    width: 33%;
+    width: 28%;
     background-color: #fff;
     margin-top: 16px;
+    position: relative;
   }
-  li{
+  #clock {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: #000;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+  }
+  #clock:hover {
+    background-color: #ccc;
+    color: #fff;
+  }
+  li {
     list-style: none;
+    cursor: pointer;
+    margin-top: 10px;
   }
 }
 </style>

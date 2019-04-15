@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- 头部搜索区域 -->
     <ul class="top_search">
       <li>
         <input placeholder="名称、区域" v-model="tableList.keyword.name">
@@ -30,6 +31,7 @@
         <el-button class="btn" @click="search">搜索</el-button>
       </li>
     </ul>
+    <!-- 表格数据展示区域 -->
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="machine_id" label="Id" width="180" align="center"></el-table-column>
       <el-table-column prop="machine_name" label="设备名称" width="180" align="center"></el-table-column>
@@ -117,7 +119,11 @@ export default {
       this.$http
         .post('/machine_list', JSON.stringify(this.tableList))
         .then(res => {
-          this.tableData = res.data
+          let data = res.data
+          data.forEach(e => {
+            e.is_online = e.is_online === 1 ? '不可用' : '可用'
+          })
+          this.tableData = data
           this.tot = this.tableData.length
         })
     },
@@ -126,7 +132,12 @@ export default {
       this.$http
         .post('/machine_list', JSON.stringify(this.tableList))
         .then(res => {
-          this.tableData = res.data
+          let data = res.data
+          data.forEach(e => {
+            e.is_online = e.is_online === 1 ? '不可用' : '可用'
+          })
+          this.tableData = data
+          this.tot = this.tableData.length
         })
     },
     // 修改用户状态的方法

@@ -33,11 +33,13 @@
           :collapse-transition="false"
           :router="true"
         >
-          <el-submenu :index="item.id+''" v-for="(item) in menuList" :key="item.id">
+          <el-submenu :index="item.id+''" v-for="(item,k) in menuList" :key="item.id">
             <template slot="title">
+              <i :class="'iconfont icon-'+menuicon[k]"></i>
               <span>{{item.authName}}</span>
             </template>
             <el-menu-item :index="item2.path" v-for="item2 in item.children" :key="item2.id">
+              <i style="margin-right:10px"></i>
               <span>{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
@@ -154,6 +156,16 @@ export default {
             }
           ]
         }
+      ],
+      // 设置左侧权限的图标
+      menuicon: [
+        'zhanghuguanli',
+        'houtaidenglu-',
+        'shenheguanli',
+        'shebeiguanli',
+        'jiageguanli',
+        'dingdanguanli',
+        'tongjiguanli'
       ]
     }
   },

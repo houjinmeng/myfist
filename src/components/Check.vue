@@ -1,5 +1,6 @@
 <template>
   <div style="text-align:center">
+    <!-- 头部搜索区域 -->
     <ul class="top_search">
       <li>
         手机号：
@@ -12,11 +13,21 @@
       <li class="rili">
         <div class="block">
           <span class="demonstration">提交时间：</span>
-          <el-date-picker v-model="value1" type="datetime" placeholder="选择日期时间"  value-format="timestamp"></el-date-picker>
+          <el-date-picker
+            v-model="value1"
+            type="datetime"
+            placeholder="选择日期时间"
+            value-format="timestamp"
+          ></el-date-picker>
         </div>
         <div class="block">
           <span class="demonstration">至</span>
-          <el-date-picker v-model="value2" type="datetime" placeholder="选择日期时间"  value-format="timestamp"></el-date-picker>
+          <el-date-picker
+            v-model="value2"
+            type="datetime"
+            placeholder="选择日期时间"
+            value-format="timestamp"
+          ></el-date-picker>
         </div>
       </li>
       <li>
@@ -42,7 +53,7 @@
       <el-table-column prop="nick" label="设备投放人" align="center"></el-table-column>
       <el-table-column prop="phone" label="投放人手机号" align="center"></el-table-column>
       <el-table-column prop="creat_time" label="提交审核时间" align="center"></el-table-column>
-      <el-table-column prop="address" label="操作" align="center">
+      <el-table-column label="操作" align="center">
         <template slot-scope="info">
           <el-button
             size="mini"
@@ -67,7 +78,7 @@
       <div id="left">
         <div>
           <span>广告素材：</span>
-          <button>预览</button>
+          <button @click="preview">预览</button>
         </div>
         <div>
           <span>背景音乐：</span>
@@ -91,7 +102,28 @@
           <span class="time">¥ {{checkMessage.order_amount}}</span>
         </div>
       </div>
-      <div id="right"></div>
+      <div id="right">
+        <el-steps
+          direction="vertical"
+          :active="1"
+          style="height:200px;margin-top:15px"
+          v-if="checkShow1"
+        >
+          <el-step title="提交审核（已提交）"></el-step>
+          <el-step title="一级审核（未审核）"></el-step>
+          <el-step title="二级审核（未审核）"></el-step>
+        </el-steps>
+        <el-steps
+          direction="vertical"
+          :active="2"
+          style="height:200px;margin-top:15px"
+          v-if="checkShow2"
+        >
+          <el-step title="提交审核（已提交）"></el-step>
+          <el-step title="一级审核（已审核）"></el-step>
+          <el-step title="二级审核（未审核）"></el-step>
+        </el-steps>
+      </div>
     </div>
     <!-- 数据分页展示 -->
     <el-pagination
@@ -108,6 +140,14 @@
         <el-button type="primary" @click="reject">驳 回</el-button>
       </span>
     </el-dialog>
+    <!-- 预览素材对话框 -->
+    <el-dialog title="素材预览" :visible.sync="dialogTableVisible">
+      <img alt style="width:100%;height:100%">
+      <video
+        src="http://192.168.1.144/public/upload/ad/video/2019/01-03/23efdc33066b0c3ca6f78b58699dc7a3.mp4"
+        autoplay
+      ></video>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,6 +160,11 @@ export default {
   },
   data() {
     return {
+      // 审核流程显示隐藏
+      checkShow1: false,
+      checkShow2: false,
+      // 预览对话框显示隐藏
+      dialogTableVisible: false,
       // 接收驳回用户id
       rejectId: '',
       // 接收驳回理由
@@ -178,6 +223,10 @@ export default {
     }
   },
   methods: {
+    // 预览素材
+    preview() {
+      this.dialogTableVisible = true
+    },
     // 按需搜所
     search() {
       console.log(this.value1)
@@ -187,6 +236,7 @@ export default {
         .post('/check_list', JSON.stringify(this.tableList))
         .then(res => {
           this.tableData = res.data
+          this.tot = this.tableData.length
         })
     },
     /**  数据分页相关1 */
@@ -214,6 +264,11 @@ export default {
       this.$http.post('/check_detail', JSON.stringify(data)).then(res => {
         this.show = true
         this.checkMessage = res.data
+        if (this.checkMessage.level === 2) {
+          this.checkShow2 = true
+        } else {
+          this.checkShow1 = true
+        }
       })
     },
     // 通过审核事件
@@ -271,6 +326,7 @@ export default {
   text-align: left;
   #left {
     flex: 1;
+    padding-left: 200px;
     div {
       margin-top: 20px;
       button {
@@ -295,6 +351,7 @@ export default {
   }
   #right {
     flex: 1;
+    padding-left: 200px;
   }
 }
 </style>

@@ -3,11 +3,11 @@
     <div id="login-box">
       <img src="../assets/img/user.png" alt>
       <div class="basebox">
-        <i slot="prefix" class="iconfont icon-user"></i>
+        <i slot="prefix" class="iconfont icon-yonghu"></i>
         <input type="text" placeholder="用户名" v-model="loginForm.name">
       </div>
       <div class="basebox">
-        <i slot="prefix" class="iconfont icon-3702mima"></i>
+        <i slot="prefix" class="iconfont icon-mima"></i>
         <input type="text" placeholder="密码" v-model="loginForm.pass">
       </div>
       <div class="basebox" style="background-color:transparent">
@@ -121,10 +121,11 @@ export default {
       padding-left: 10px;
       box-sizing: border-box;
       border-right: 1px solid #ccc;
-      display: inline-block;
       height: 100%;
       text-align: center;
       line-height: 50px;
+      font-size: 30px;
+      color: #555555
     }
     input {
       width: 100px;

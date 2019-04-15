@@ -103,6 +103,7 @@ export default {
         .post('/user_list', JSON.stringify(this.tableList))
         .then(res => {
           this.userList = res.data
+          this.tot = this.userList.length
         })
     },
     /**  数据分页相关1 */
