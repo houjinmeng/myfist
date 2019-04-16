@@ -75,6 +75,7 @@
     </el-table>
     <!-- 广告详情及审核流程 -->
     <div id="box" v-if="show">
+      <span id="close" @click="show=false">X</span>
       <div id="left">
         <div>
           <span>广告素材：</span>
@@ -102,6 +103,7 @@
           <span class="time">¥ {{checkMessage.order_amount}}</span>
         </div>
       </div>
+      <!-- 审核流程示意图 -->
       <div id="right">
         <el-steps
           direction="vertical"
@@ -142,11 +144,14 @@
     </el-dialog>
     <!-- 预览素材对话框 -->
     <el-dialog title="素材预览" :visible.sync="dialogTableVisible">
-      <img alt style="width:100%;height:100%">
-      <video
-        src="http://192.168.1.144/public/upload/ad/video/2019/01-03/23efdc33066b0c3ca6f78b58699dc7a3.mp4"
-        autoplay
-      ></video>
+      <img
+        style="width:50%;height:50%"
+        v-for="item in imgData"
+        :src="item"
+        v-show="imgFlag"
+        :key="item.index"
+      >
+      <video :key="item.index" v-for="item in videoData" v-show="videoFlag" :src="item" preload="" height="300px" width="50%" controls></video>
     </el-dialog>
   </div>
 </template>
@@ -208,7 +213,12 @@ export default {
       ],
       value: '',
       // 接收表格数据
-      tableData: []
+      tableData: [],
+      // 接收传回的素材数据
+      imgData: [],
+      videoData: [],
+      imgFlag: false,
+      videoFlag: false
     }
   },
   // 时间戳过滤器
@@ -226,6 +236,20 @@ export default {
     // 预览素材
     preview() {
       this.dialogTableVisible = true
+      const data = this.checkMessage.ad
+      for (let i = 0; i < data.length; i++) {
+        let fileName = data[i].lastIndexOf('.')
+        let fileNameLength = data[i].length
+        let a = data[i].substring(fileName + 1, fileNameLength)
+        if (a === 'jpg' || a === 'pang') {
+          this.imgFlag = true
+          this.imgData.push(data[i])
+        }
+        if (a === 'mp4') {
+          this.videoFlag = true
+          this.videoData.push(data[i])
+        }
+      }
     },
     // 按需搜所
     search() {
@@ -321,12 +345,28 @@ export default {
 <style lang="less" scoped>
 // 底部广告详情盒子样式
 #box {
-  display: flex;
-  justify-content: space-between;
+  overflow: hidden;
   text-align: left;
+  position: relative;
+  #close {
+    font-size: 16px;
+    position: absolute;
+    right: 20%;
+    top: 10px;
+    color: #000;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+  }
+  #close:hover {
+    background-color: red;
+    color: #fff;
+  }
   #left {
-    flex: 1;
-    padding-left: 200px;
+    float: left;
+    padding-left: 300px;
     div {
       margin-top: 20px;
       button {
@@ -350,7 +390,7 @@ export default {
     }
   }
   #right {
-    flex: 1;
+    float: left;
     padding-left: 200px;
   }
 }

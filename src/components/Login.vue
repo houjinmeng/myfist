@@ -3,11 +3,11 @@
     <div id="login-box">
       <img src="../assets/img/user.png" alt>
       <div class="basebox">
-        <i slot="prefix" class="iconfont icon-yonghu"></i>
+        <i slot="prefix" class="iconfont icon-yonghu" style="margin:0"></i>
         <input type="text" placeholder="用户名" v-model="loginForm.name">
       </div>
       <div class="basebox">
-        <i slot="prefix" class="iconfont icon-mima"></i>
+        <i slot="prefix" class="iconfont icon-mima" style="margin:0"></i>
         <input type="text" placeholder="密码" v-model="loginForm.pass">
       </div>
       <div class="basebox" style="background-color:transparent">
@@ -30,9 +30,14 @@
 </template>
 <script>
 export default {
+  created() {
+    this.randomString(8)
+  },
   mounted() {
     // 页面加载获取验证码
     this.getkey()
+    // 回车事件
+    this.keyupSubmit()
   },
   data() {
     return {
@@ -40,23 +45,53 @@ export default {
         name: 'admin',
         pass: '123456',
         code: '',
-        token: '121'
+        token: ''
       },
       getcode: ''
     }
   },
   methods: {
+    // 生成随机字符串
+    randomString(len) {
+      len = len || 32
+      var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
+      var maxPos = $chars.length
+      var pwd = ''
+      for (var i = 0; i < len; i++) {
+        pwd += $chars.charAt(Math.floor(Math.random() * maxPos))
+      }
+      this.loginForm.token = pwd
+    },
+    // 回车登录事件
+    keyupSubmit() {
+      document.onkeydown = e => {
+        let _key = window.event.keyCode
+        if (_key === 13) {
+          this.login()
+        }
+      }
+    },
     // 点击登陆事件
     login() {
       this.$http.post('/login', JSON.stringify(this.loginForm)).then(res => {
-        // 判断用户名或密码 真实性校验失败
-        if (res.status !== 200) {
-          return this.$message.error('用户名或密码不存在')
+        // 验证码不能为空
+        if (this.loginForm.code === '') {
+          this.getcode = res.data.code
+          return this.$message.error('验证码不能为空')
         }
-        // 通过浏览器的sessionStorage记录服务器返回的token信息
-        window.sessionStorage.setItem('token', res.data.token)
-        // (校验成功)页面重定向到后台首页(/home)
-        this.$router.push('/home')
+        // 判断验证码是否正确
+        if (res.data.status === -1) {
+          this.getcode = res.data.code
+          return this.$message.error('验证码不正确')
+        } else if (res.data.status === -2) {
+          // 判断用户名或密码 真实性校验失败
+          return this.$message.error('用户名或密码不正确')
+        } else if (res.data.status === 1) {
+          // 通过浏览器的sessionStorage记录服务器返回的token信息
+          window.sessionStorage.setItem('token', res.data.token)
+          // (校验成功)页面重定向到后台首页(/home)
+          this.$router.push('/home')
+        }
       })
     },
     // 获取验证码
@@ -125,7 +160,7 @@ export default {
       text-align: center;
       line-height: 50px;
       font-size: 30px;
-      color: #555555
+      color: #555555;
     }
     input {
       width: 100px;

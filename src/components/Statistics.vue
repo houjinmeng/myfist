@@ -20,12 +20,12 @@
         <el-table-column type="index" label="序号" width="200" align="center"></el-table-column>
         <el-table-column prop="machine_name" label="设备名称" align="center"></el-table-column>
         <el-table-column prop="address" label="设备地点" align="center"></el-table-column>
-        <el-table-column prop label="操作" align="center">
+        <el-table-column label="操作" align="center">
           <template slot-scope="info">
             <el-button
               size="medium"
               style="background-color:#0e9692;color:#fff"
-              @click="look(info.row.id)"
+              @click="look(info.row.machine_id)"
             >查看</el-button>
           </template>
         </el-table-column>
@@ -37,8 +37,8 @@
           <span class="demonstration">选择日期：</span>
           <el-date-picker v-model="value1" type="date" placeholder="选择日期" value-format="yyyy/MM/dd"></el-date-picker>
         </div>
-        <ul>
-          <li @click="lookList">
+        <ul @click="lookList(this)">
+          <li>
             <span>{{value1}}/12:00</span>至
             <span>{{value1}}/13:00</span>
           </li>
@@ -90,11 +90,11 @@
       </div>
       <!-- 查看具体时间段的列表 -->
       <el-dialog :visible.sync="lookTableVisible">
-        <el-table :data="lookMessage" stripe style="width: 100%">
+        <!-- <el-table :data="lookMessage" stripe style="width: 100%">
           <el-table-column prop label="投放人" width="200" align="center"></el-table-column>
           <el-table-column prop label="投放素材" align="center"></el-table-column>
           <el-table-column prop label align="播放次数"></el-table-column>
-        </el-table>
+        </el-table>-->
       </el-dialog>
     </div>
     <!-- 数据分页展示 -->
@@ -140,10 +140,18 @@ export default {
   },
   methods: {
     // 获取查看具体时间段数据
-    lookList() {
-      this.lookTableVisible = true
+    lookList: function(ele) {
+      var e = ''
+      e = e || window.event
+      var target = e.target || e.srcElement
+      var li = document.querySelectorAll('li')
+      for (var i in li) {
+        if (target === li[i]) {
+          var value = (parseInt(i) - 6) * 3600
+        }
+      }
       var date = new Date(this.value1)
-      var time = Date.parse(date) / 1000 + 12 * 3600
+      var time = Date.parse(date) / 1000 + value
       const data = {
         token: window.sessionStorage.getItem('token'),
         machine_id: this.Id,
@@ -152,6 +160,7 @@ export default {
       this.$http.post('/statistical_detail', JSON.stringify(data)).then(res => {
         this.lookMessage = res.data
       })
+      this.lookTableVisible = true
     },
     // 点击查看按钮
     look(uid) {
@@ -222,13 +231,16 @@ export default {
     height: 20px;
   }
   #clock:hover {
-    background-color: #ccc;
+    background-color: red;
     color: #fff;
   }
   li {
     list-style: none;
     cursor: pointer;
     margin-top: 10px;
+    span {
+      pointer-events: none;
+    }
   }
 }
 </style>
