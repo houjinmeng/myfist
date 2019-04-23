@@ -229,6 +229,7 @@ export default {
     background-color: #222d32;
     color: #333;
     width: 200px;
+    overflow-y: hidden;
     .el-menu {
       border-right-width: 0;
     }

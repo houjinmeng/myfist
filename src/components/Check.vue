@@ -151,7 +151,16 @@
         v-show="imgFlag"
         :key="item.index"
       >
-      <video :key="item.index" v-for="item in videoData" v-show="videoFlag" :src="item" preload="" height="300px" width="50%" controls></video>
+      <video
+        :key="item.index"
+        v-for="item in videoData"
+        v-show="videoFlag"
+        :src="item"
+        preload
+        height="300px"
+        width="50%"
+        controls
+      ></video>
     </el-dialog>
   </div>
 </template>
@@ -253,15 +262,9 @@ export default {
     },
     // 按需搜所
     search() {
-      console.log(this.value1)
       this.tableList.keyword.start_time = this.value1 / 1000
       this.tableList.keyword.end_time = this.value2 / 1000
-      this.$http
-        .post('/check_list', JSON.stringify(this.tableList))
-        .then(res => {
-          this.tableData = res.data
-          this.tot = this.tableData.length
-        })
+      this.getcheckList()
     },
     /**  数据分页相关1 */
     // 当前页码变化的回调处理

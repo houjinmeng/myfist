@@ -129,16 +129,7 @@ export default {
     },
     // 按条件搜索
     search() {
-      this.$http
-        .post('/machine_list', JSON.stringify(this.tableList))
-        .then(res => {
-          let data = res.data
-          data.forEach(e => {
-            e.is_online = e.is_online === 1 ? '不可用' : '可用'
-          })
-          this.tableData = data
-          this.tot = this.tableData.length
-        })
+      this.getmachineList()
     },
     // 修改用户状态的方法
     changeState(uid) {

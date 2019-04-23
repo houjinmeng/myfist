@@ -99,12 +99,7 @@ export default {
     },
     // 按需搜索
     search() {
-      this.$http
-        .post('/user_list', JSON.stringify(this.tableList))
-        .then(res => {
-          this.userList = res.data
-          this.tot = this.userList.length
-        })
+      this.getuserList()
     },
     /**  数据分页相关1 */
     // 当前页码变化的回调处理

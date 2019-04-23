@@ -179,12 +179,7 @@ export default {
     },
     // 按需搜所
     search() {
-      this.$http
-        .post('/statistical_list', JSON.stringify(this.tableList))
-        .then(res => {
-          this.tableData = res.data
-          this.tot = this.tableData.length
-        })
+      this.getList()
     },
     /**  数据分页相关1 */
     // 当前页码变化的回调处理
@@ -193,7 +188,7 @@ export default {
       // console.log(arg)
       this.tableList.page = arg
       // 根据变化后的页码重新获得数据
-      this.getuserList()
+      this.getList()
     },
     // 获取当前日期
     getDate() {
