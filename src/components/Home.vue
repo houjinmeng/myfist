@@ -1,13 +1,13 @@
 <template>
   <el-container>
     <el-header>
-      <div id="logo-title">北京快乐平方广告管理后台</div>
+      <div id="logo-title">北京哇咔传媒广告管理后台</div>
       <el-popover placement="bottom" trigger="click" id="popover">
         <el-button type="primary" @click="logout" style="margin-left:24px">退出登录</el-button>
         <el-button slot="reference" style="background-color:#18bc9c;border:0 none;color:#fff">
           <div id="user">
             <img src="../assets/img/user.png" alt>
-            <span>Admin</span>
+            <span>{{username}}</span>
           </div>
         </el-button>
       </el-popover>
@@ -17,13 +17,13 @@
         <div id="showuser">
           <img src="../assets/img/user.png" alt>
           <div id="left_box">
-            <p>Admin</p>
+            <p>{{username}}</p>
             <p>
               <i></i>在线
             </p>
           </div>
         </div>
-        <div class="home">首页</div>
+        <router-link :to="'/welcome'"><div class="home">首页</div></router-link>
         <el-menu
           class="el-menu-vertical-demo"
           background-color="#222d32"
@@ -49,7 +49,6 @@
         <router-view></router-view>
       </el-main>
     </el-container>
-    <el-footer></el-footer>
   </el-container>
 </template>
 
@@ -57,6 +56,8 @@
 export default {
   data() {
     return {
+      // 已登录用户名
+      username: window.sessionStorage.getItem('username'),
       //  左侧导航菜单数据
       menuList: [
         {
@@ -215,8 +216,7 @@ export default {
       align-items: center;
       justify-content: space-between;
       font-size: 20px;
-      position: relative;
-      margin-top: 10px;
+      margin-top: 12px;
       img {
         width: 50px;
         height: 50px;
@@ -240,6 +240,7 @@ export default {
       line-height: 50px;
       border-top: 1px solid #2c3438;
       text-align: center;
+      cursor: pointer;
     }
     #showuser {
       height: 60px;
@@ -276,9 +277,6 @@ export default {
 
   .el-main {
     background-color: #f2f2f2;
-  }
-  .el-footer {
-    background-color: #18bc9c;
   }
 }
 </style>

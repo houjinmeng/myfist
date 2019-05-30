@@ -1,5 +1,5 @@
 <template>
-  <div id="welcome">欢迎登陆北京快乐平方后台管理系统</div>
+  <div id="welcome">欢迎登陆北京哇咔传媒后台管理系统</div>
 </template>
 
 <script>

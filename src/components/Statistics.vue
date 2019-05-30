@@ -90,11 +90,10 @@
       </div>
       <!-- 查看具体时间段的列表 -->
       <el-dialog :visible.sync="lookTableVisible">
-        <!-- <el-table :data="lookMessage" stripe style="width: 100%">
-          <el-table-column prop label="投放人" width="200" align="center"></el-table-column>
-          <el-table-column prop label="投放素材" align="center"></el-table-column>
-          <el-table-column prop label align="播放次数"></el-table-column>
-        </el-table>-->
+        <div v-for="item in lookMessage" :key="item.index" id="timeList">
+          <span>投放人: {{item.key}}</span>
+          <span v-for="(item2,k) in item.value" :key="k">素材{{k+1}}播放次数：{{item2.play_count}}次</span>
+        </div>
       </el-dialog>
     </div>
     <!-- 数据分页展示 -->
@@ -103,6 +102,8 @@
       background
       layout="prev, pager, next"
       :total="this.tot"
+      :current-page="tableList.page"
+      :page-size="10"
     ></el-pagination>
   </div>
 </template>
@@ -124,11 +125,11 @@ export default {
       // 日历默认值
       value1: '',
       // 总记录数据条数
-      tot: 100,
+      tot: 10,
       // 获取表格数据要传的参
       tableList: {
         token: window.sessionStorage.getItem('token'),
-        page: '',
+        page: 1,
         keyword: {
           machine_name: '',
           address: ''
@@ -140,27 +141,30 @@ export default {
   },
   methods: {
     // 获取查看具体时间段数据
-    lookList: function(ele) {
-      var e = ''
-      e = e || window.event
-      var target = e.target || e.srcElement
-      var li = document.querySelectorAll('li')
-      for (var i in li) {
-        if (target === li[i]) {
-          var value = (parseInt(i) - 6) * 3600
-        }
-      }
-      var date = new Date(this.value1)
-      var time = Date.parse(date) / 1000 + value
+    lookList(ele) {
+      // var e = ''
+      // e = e || window.event
+      // var target = e.target || e.srcElement
+      // var li = document.querySelectorAll('li')
+      // for (var i in li) {
+      //   if (target === li[i]) {
+      //     var value = (parseInt(i) - 6) * 3600
+      //   }
+      // }
+      // var date = new Date(this.value1)
+      // var time = Date.parse(date) / 1000 + value
       const data = {
         token: window.sessionStorage.getItem('token'),
         machine_id: this.Id,
-        timestamp: time
+        timestamp: 1554699600
       }
       this.$http.post('/statistical_detail', JSON.stringify(data)).then(res => {
-        this.lookMessage = res.data
+        this.lookMessage = Object.keys(res.data).map((item, index) => ({
+          key: Object.keys(res.data)[index],
+          value: res.data[item]
+        }))
+        this.lookTableVisible = true
       })
-      this.lookTableVisible = true
     },
     // 点击查看按钮
     look(uid) {
@@ -173,8 +177,8 @@ export default {
       this.$http
         .post('/statistical_list', JSON.stringify(this.tableList))
         .then(res => {
-          this.tableData = res.data
-          this.tot = this.tableData.length
+          this.tableData = res.data.data
+          this.tot = res.data.count
         })
     },
     // 按需搜所
@@ -208,6 +212,17 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+// 查看具体时间素材弹框
+#timeList{
+  font-size: 20px;
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+  span{
+    margin-right: 30px
+  }
+}
+// 点击查看日期列表
 #box {
   display: flex;
   #right {

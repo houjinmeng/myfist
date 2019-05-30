@@ -8,7 +8,10 @@
           v-model="tableList.keyword.phone"
           oninput="value=value.replace(/[^\d]/g,'')"
           placeholder="请输入手机号"
+          maxlength="11"
+          @blur="test"
         >
+        <div v-show="hintShow" style="color:red;padding-left:20px;font-size:14px">{{hint}}</div>
       </li>
       <li>
         审核状态：
@@ -29,7 +32,9 @@
       <el-table-column type="index" label="序号" width="200" align="center"></el-table-column>
       <el-table-column prop="nick" label="微信昵称" align="center"></el-table-column>
       <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
-      <el-table-column prop="addtime" label="最后登录时间" align="center"></el-table-column>
+      <el-table-column label="最后登录时间" align="center">
+        <template slot-scope="info">{{info.row.addtime*1000|formatDate}}</template>
+      </el-table-column>
       <el-table-column prop="status" label="状态" align="center">
         <el-switch
           v-model="info.row.status"
@@ -46,23 +51,39 @@
       background
       layout="prev, pager, next"
       :total="this.tot"
+      :current-page="tableList.page"
+      :page-size="10"
     ></el-pagination>
   </div>
 </template>
 
 <script>
+import { formatDate } from '@/common/date.js' // 在组件中引用date.js
 export default {
   mounted() {
     this.getuserList()
   },
+  // 时间戳过滤器
+  filters: {
+    formatDate(time) {
+      var date = new Date(time)
+      return formatDate(date, 'yyyy年MM月dd日') // 年月日 格式自己定义   'yyyy : MM : dd'  例 2018年12月5日的格式
+    },
+    formatDateTwo(time) {
+      var date = new Date(time)
+      return formatDate(date, 'hh:mm:ss') // 时间点 例 21点12分12秒的格式
+    }
+  },
   data() {
     return {
+      hintShow: false, // 提示语显示
+      hint: '信息填写错误', // 提示语
       // 总记录数据条数
-      tot: 100,
+      tot: 10,
       // 获取列表数据所传参数
       tableList: {
         token: window.sessionStorage.getItem('token'),
-        page: '',
+        page: 1,
         keyword: {
           phone: '',
           status: ''
@@ -88,13 +109,31 @@ export default {
     }
   },
   methods: {
+    test() {
+      // 验证手机号
+      let reg = /^[1][3,4,5,7,8][0-9]{9}$/
+      if (this.tableList.keyword.phone === '') {
+        this.hintShow = false
+        this.hint = ''
+      } else if (
+        this.tableList.keyword.phone.length <= 10 ||
+        !reg.test(this.tableList.keyword.phone)
+      ) {
+        this.hintShow = true
+        this.hint = '请输入正确的手机号'
+        return false
+      } else {
+        this.hintShow = false
+      }
+      return true
+    },
     // 获取用户列表数据
     getuserList() {
       this.$http
         .post('/user_list', JSON.stringify(this.tableList))
         .then(res => {
-          this.userList = res.data
-          this.tot = this.userList.length
+          this.userList = res.data.data
+          this.tot = res.data.count
         })
     },
     // 按需搜索

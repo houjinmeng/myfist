@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import axios from 'axios'
+import 'babel-polyfill'
+import promise from 'es6-promise'
 
 // 引入global.css全局样式控制文件
 import './assets/css/global.css'
@@ -12,7 +14,7 @@ import './assets/fonts/iconfont.css'
 // 导入element-ui组件库并注册给vue
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
+promise.polyfill()
 Vue.use(ElementUI)
 
 // axios请求根地址
@@ -21,18 +23,6 @@ axios.defaults.baseURL = 'http://192.168.1.144/ad/audit/'
 Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
-// axios的请求拦截器(在其中配置token)
-// axios.interceptors.request.use(
-//   function(config) {
-//     // config:代表axios的子级配置对象
-//     var token = window.sessionStorage.getItem('token')
-//     config.headers.Authorization = token
-//     return config
-//   },
-//   function(error) {
-//     return Promise.reject(error)
-//   }
-// )
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="text-align:center">
     <!-- 头部搜索区域 -->
     <ul class="top_search">
       <li>
@@ -49,14 +49,14 @@
       </el-table-column>
     </el-table>
     <!-- 数据分页展示 -->
-    <div style="width:100%;text-align:center">
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        @current-change="handleCurrentChange"
-        :total="tot"
-      ></el-pagination>
-    </div>
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      @current-change="handleCurrentChange"
+      :total="tot"
+      :current-page="tableList.page"
+      :page-size="10"
+    ></el-pagination>
   </div>
 </template>
 
@@ -72,7 +72,7 @@ export default {
       // 获取列表数据所传参数
       tableList: {
         token: window.sessionStorage.getItem('token'),
-        page: '',
+        page: 1,
         keyword: {
           name: '',
           is_online: '',
@@ -119,12 +119,12 @@ export default {
       this.$http
         .post('/machine_list', JSON.stringify(this.tableList))
         .then(res => {
-          let data = res.data
+          let data = res.data.data
           data.forEach(e => {
             e.is_online = e.is_online === 1 ? '不可用' : '可用'
           })
           this.tableData = data
-          this.tot = this.tableData.length
+          this.tot = res.data.count
         })
     },
     // 按条件搜索

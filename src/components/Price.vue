@@ -5,19 +5,31 @@
       <div style="width:300px">
         <span>5秒/周：</span>
         <span>
-          <input type="text" v-model="priceForm.five" oninput="value=value.replace(/[^\d]/g,'')"> 元
+          <input
+            type="text"
+            v-model="priceForm.five"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
+          > 元
         </span>
       </div>
       <div style="width:300px">
         <span>15秒/周：</span>
         <span>
-          <input type="text" v-model="priceForm.fifteen" oninput="value=value.replace(/[^\d]/g,'')"> 元
+          <input
+            type="text"
+            v-model="priceForm.fifteen"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
+          > 元
         </span>
       </div>
       <div style="width:300px">
         <span>30秒/周：</span>
         <span>
-          <input type="text" v-model="priceForm.thirty" oninput="value=value.replace(/[^\d]/g,'')"> 元
+          <input
+            type="text"
+            v-model="priceForm.thirty"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
+          > 元
         </span>
       </div>
     </div>
@@ -29,7 +41,7 @@
           <input
             type="text"
             v-model="priceForm.five_timeout"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > 元/秒
         </span>
       </div>
@@ -39,7 +51,7 @@
           <input
             type="text"
             v-model="priceForm.fifteen_timeout"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > 元/秒
         </span>
       </div>
@@ -49,7 +61,7 @@
           <input
             type="text"
             v-model="priceForm.thirty_time"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > 元/秒
         </span>
       </div>
@@ -62,7 +74,7 @@
           <input
             type="text"
             v-model="priceForm.one_month_discount"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > %
         </span>
       </div>
@@ -72,7 +84,7 @@
           <input
             type="text"
             v-model="priceForm.three_month_discount"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > %
         </span>
       </div>
@@ -82,7 +94,7 @@
           <input
             type="text"
             v-model="priceForm.six_month_discount"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > %
         </span>
       </div>
@@ -92,7 +104,7 @@
           <input
             type="text"
             v-model="priceForm.one_year_discount"
-            oninput="value=value.replace(/[^\d]/g,'')"
+            oninput="value=value.replace(/[^\d{1,}\.\d{1,}|\d{1,}]/g,'')"
           > %
         </span>
       </div>
@@ -123,25 +135,38 @@ export default {
         six_month_discount: '',
         one_year_discount: '',
         token: window.sessionStorage.getItem('token')
-      },
-      key: {
-        token: window.sessionStorage.getItem('token')
       }
     }
   },
   methods: {
     // 获取价格数据
     getpriceList() {
-      this.$http.post('/price_list', JSON.stringify(this.key)).then(res => {
-        this.priceForm = res.data
-        console.log(typeof this.priceForm.five)
-      })
+      this.$http
+        .post('/price_list', JSON.stringify(this.priceForm))
+        .then(res => {
+          this.priceForm.five = res.data.five
+          this.priceForm.fifteen = res.data.fifteen
+          this.priceForm.thirty = res.data.thirty
+          this.priceForm.five_timeout = res.data.five_timeout
+          this.priceForm.fifteen_timeout = res.data.fifteen_timeout
+          this.priceForm.thirty_time = res.data.thirty_time
+          this.priceForm.one_month_discount = res.data.one_month_discount
+          this.priceForm.three_month_discount = res.data.three_month_discount
+          this.priceForm.six_month_discount = res.data.six_month_discount
+          this.priceForm.one_year_discount = res.data.one_year_discount
+        })
     },
+    // 修改价格保存
     checkPrice() {
       this.$http
         .post('/price_control', JSON.stringify(this.priceForm))
         .then(res => {
-          console.log(res)
+          if (res.data.status) {
+            this.$message.success('修改价格成功')
+          } else {
+            this.$message.error('修改价格失败')
+          }
+          this.getpriceList()
         })
     }
   }
@@ -158,10 +183,10 @@ export default {
     padding-bottom: 20px 0;
   }
   #samebg {
-    background: url(../assets/img/price.png) no-repeat -23px -9px;
+    background: url(../assets/img/price.png) no-repeat -23px -10px;
   }
   #longbg {
-    background: url(../assets/img/ui.png) no-repeat 0 -8px;
+    background: url(../assets/img/ui.png) no-repeat 0 -9px;
     width: 400px;
   }
   .box1 {

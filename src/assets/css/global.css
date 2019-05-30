@@ -1,10 +1,17 @@
 html,
 body,
 #app,
-ul {
+ul,
+input {
   height: 100%;
   margin: 0;
   padding: 0;
+  font-family: '微软雅黑';
+}
+button {
+  margin: 0;
+  padding: 0;
+  font-family: '微软雅黑';
 }
 /*给左侧权限菜单设置样式*/
 .el-submenu__title,
@@ -18,7 +25,7 @@ ul {
 }
 /*给分页 设置统一样式*/
 .el-pagination {
-  margin-top: 15px;
+  margin-top: 30px;
   font-size: 12px;
 }
 .top_search {
@@ -47,4 +54,10 @@ ul {
 }
 i.iconfont {
   margin-right: 10px;
+}
+.right {
+  float: right;
+}
+.left {
+  float: left;
 }
